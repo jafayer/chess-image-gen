@@ -50,6 +50,34 @@ class App extends Component {
                 <span className="slider round"></span>
               </label>
             </label>
+            <div>
+              <button className="saveButton" onClick={() => {
+                const pgn = encodeURI(this.chess.pgn());
+                const whiteColor = this.state.whiteColor;
+                const blackColor = this.state.blackColor;
+                const darkMode = this.state.darkMode;
+                const highlightLastMove = this.state.highlightLastMove;
+
+                const url = `http://localhost:8000/?pgn=${pgn}&whiteColor=${whiteColor}&blackColor=${blackColor}&darkMode=${darkMode}&highlightLastMove=${highlightLastMove}`;
+
+                const req = new XMLHttpRequest();
+
+                req.open('POST',url,true);
+
+                req.onload = (res) => {
+                  if(req.readyState === 4) {
+                    if(req.status === 200) {
+                      console.log(res);
+                    } else {
+                      console.warn(`There be errors about here`);
+                    }
+                  }
+                }
+                req.send();
+              }}>
+                Save design!
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -73,6 +73,24 @@ label.full {
 }
 
 
+.controls .saveButton {
+  display: block;
+  margin: 15px auto;
+  text-align: center;
+  padding: 20px 25px;
+  border: none;
+  background-color: #3838a7;
+  font-family: 'Montserrat',serif;
+  font-size: 20px;
+  color: #fff;
+  transition: .3s all;
+  cursor: pointer;
+}
+
+.controls .saveButton:hover {
+  opacity: .9;
+}
+
 /*Switch CSS */
 /* The switch - the box around the slider */
 .switch {
