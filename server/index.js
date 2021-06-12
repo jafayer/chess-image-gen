@@ -2,10 +2,18 @@ const express = require('express');
 const sqlite3 = require('sqlite3');
 const cors = require('cors');
 
+const allowedOrigins = ['https://nf6.io','http://nf6.io','https://www.nf6.io','http://www.nf6.io'];
+
+const corsOptions = {
+    origin: allowedOrigins,
+    methods: ['GET','POST']
+}
 const app = express();
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded());
+
+
 
 const db = new sqlite3.Database('./db/games.db', sqlite3.OPEN_READWRITE, (err) => {
     if(err) {
