@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
 import Chess from 'chess.js';
+import Controls from './components/controls';
+import Messages from './components/messages';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 class App extends Component {
   state = {
@@ -23,63 +27,23 @@ class App extends Component {
           }}
         ></canvas>
         <p id="pgn"></p>
-        <div className="controls">
-          <textarea id="importGame" cols="30" rows="10" placeholder="Input PGN"
-            onChange={(e) => {this.handlePGN(e.target.value)}}
-          ></textarea>
-          <div className="row">
-            <label htmlFor="whiteColor">
-              White Color
-              <input value={this.state.whiteColor} type="color" onChange={(e) => {this.handleOtherChange(e.target.value,'whiteColor')}}></input>
-            </label>
-            <label htmlFor="blackColor">
-              Black color
-              <input value={this.state.blackColor} type="color" onChange={(e) => {this.handleOtherChange(e.target.value,'blackColor')}}></input>
-            </label>
-            <label className="full">
-              Dark mode?
-              <label className="switch">
-                <input type="checkbox" defaultChecked={this.state.darkMode} onChange={(e) => {this.handleOtherChange(e.target.checked,'darkMode')}} />
-                <span className="slider round"></span>
-              </label>
-            </label>
-            <label className="full">
-              Highlight Last move?
-              <label className="switch">
-                <input type="checkbox" defaultChecked={this.state.highlightLastMove} onChange={(e) => {this.handleOtherChange(e.target.checked,'highlightLastMove')}} />
-                <span className="slider round"></span>
-              </label>
-            </label>
-            <div>
-              <button className="saveButton" onClick={() => {
-                const pgn = encodeURI(this.chess.pgn());
-                const whiteColor = this.state.whiteColor;
-                const blackColor = this.state.blackColor;
-                const darkMode = this.state.darkMode;
-                const highlightLastMove = this.state.highlightLastMove;
-
-                const url = `http://localhost:8000/?pgn=${pgn}&whiteColor=${whiteColor}&blackColor=${blackColor}&darkMode=${darkMode}&highlightLastMove=${highlightLastMove}`;
-
-                const req = new XMLHttpRequest();
-
-                req.open('POST',url,true);
-
-                req.onload = (res) => {
-                  if(req.readyState === 4) {
-                    if(req.status === 200) {
-                      console.log(res);
-                    } else {
-                      console.warn(`There be errors about here`);
-                    }
-                  }
-                }
-                req.send();
-              }}>
-                Save design!
-              </button>
-            </div>
-          </div>
-        </div>
+        {!this.state.fetchedGame &&
+        <Controls
+          chess={this.chess}
+          handlePGN={this.handlePGN}
+          handleOtherChange={this.handleOtherChange}
+          fetchedID={this.state.fetchedID}
+          whiteColor={this.state.whiteColor}
+          blackColor={this.state.blackColor}
+          darkMode={this.state.darkMode}
+          highlightLastMove={this.state.highlightLastMove}
+        />}
+        {!this.state.fetchedGame && (
+          <Messages
+            fetchedID={this.state.fetchedID}
+          />
+        )}
+        <ToastContainer />
       </div>
     );
   }
@@ -120,7 +84,36 @@ squareColors = {
 
     document.chess = this.chess;
 
+    const path = window.location.pathname.slice(1);
+    if(path) {
+      this.fetchFromServer(path);
+    }
+
   }
+
+  fetchFromServer = (path) => {
+    fetch('http://localhost:8000/game/'+path)
+    .then(res => {
+        return res.json();
+    })
+    .then(json => {
+        this.setState({
+        fetchedGame: json,
+        blackColor: json.blackColor,
+        whiteColor: json.whiteColor,
+        pgn: json.pgn,
+        darkMode: json.darkMode,
+        highlightLastMove: json.highlightLastMove
+        }, () => {
+        this.chess.load_pgn(this.state.pgn);
+        this.updateBoard();
+        });
+    })
+    .catch(err => {
+      this.error("Couldn't find a game with that ID!");
+    });
+  }
+
 
   fillBoard = () => {
     let rank = 1;
@@ -251,11 +244,26 @@ handlePGN = (value) => {
     }
   }
 
-  handleOtherChange = (value,target) => {
+  handleOtherChange = (value,target,callback=null) => {
     this.setState({
       [target]: value
     }, () => {
+      if(callback) {
+        callback();
+      }
       this.updateBoard();
+    });
+  }
+
+  error = (message) => {
+    toast.error(message, {
+      position: "bottom-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
     });
   }
 }

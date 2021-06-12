@@ -87,8 +87,59 @@ label.full {
   cursor: pointer;
 }
 
+.controls .saveButton:disabled {
+  background-color: grey;
+  cursor: not-allowed;
+}
+
 .controls .saveButton:hover {
   opacity: .9;
+}
+
+.message {
+  width: fit-content;
+  min-width: 300px;
+  margin: 5px auto;
+  padding: 5px;
+  transition: .3s all;
+}
+
+
+.message.warn {
+  border: 2px solid #dede15;
+  display: flex;
+  background: #ffffde;
+  border-radius: 5px;
+  align-items: center;
+  max-width: 100%;
+}
+
+.message.warn .material-icons {
+  font-size: 28px;
+  padding: 15px;
+}
+.message.success {
+  border: 2px solid #999;
+}
+.message.success p {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.message.success p button {
+  border: none;
+  transition: .3s all;
+  background-color: #3838a7;
+  color: #fff;
+  cursor: pointer;
+  padding: 15px 20px;
+}
+.message.success p button:hover {
+  opacity: .8;
+}
+.message.success p .material-icons {
+  vertical-align: sub;
 }
 
 /*Switch CSS */
