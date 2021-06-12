@@ -92,7 +92,7 @@ squareColors = {
   }
 
   fetchFromServer = (path) => {
-    fetch('https://api.nf6.io'+path)
+    fetch('https://api.nf6.io/game/'+path)
     .then(res => {
         return res.json();
     })
