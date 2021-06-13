@@ -38,7 +38,7 @@ class App extends Component {
           darkMode={this.state.darkMode}
           highlightLastMove={this.state.highlightLastMove}
         />}
-        {!this.state.fetchedGame && (
+        {(!this.state.fetchedGame && !this.state.fetchingGame) && (
           <Messages
             fetchedID={this.state.fetchedID}
           />
@@ -86,11 +86,16 @@ squareColors = {
 
     const path = window.location.pathname.slice(1);
     if(path) {
-      this.fetchFromServer(path);
+      console.log('fetching');
+      this.setState({
+        fetchingGame: true
+      },() => {
+        this.fetchFromServer(path);
+      });
     }
 
   }
-
+//
   fetchFromServer = (path) => {
     fetch('https://api.nf6.io/game/'+path)
     .then(res => {
@@ -103,10 +108,12 @@ squareColors = {
         whiteColor: json.whiteColor,
         pgn: json.pgn,
         darkMode: json.darkMode,
-        highlightLastMove: json.highlightLastMove
+        highlightLastMove: json.highlightLastMove,
+        fetchingGame: false,
         }, () => {
         this.chess.load_pgn(this.state.pgn);
         this.updateBoard();
+        console.log('fetched');
         });
     })
     .catch(err => {

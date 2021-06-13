@@ -129,10 +129,9 @@ app.get('/game/:id',(req,res) => {
     let gameID = req.params.id;
     lookup(gameID, (row) => { //callback
         console.log('Sending game to client!');
-        body = JSON.stringify(row);
-        res.send(body);
+        res.json(row);
     }, () => { //failure
-        res.status(404).send();
+        res.status(404).json({'err': 'Game not found!'});
     });
 })
 
@@ -145,7 +144,7 @@ app.post('/', (req,res) => {
             insertEntry(p.pgn,p.whiteColor,p.blackColor,p.darkMode,p.highlightLastMove, (entryID) => {
                 console.log(entryID);
                 let responseBody = {id: entryID};
-                res.status(200).send(JSON.stringify(responseBody)); 
+                res.status(200).json(responseBody); 
             });
         } catch (e) {
             console.log(e);

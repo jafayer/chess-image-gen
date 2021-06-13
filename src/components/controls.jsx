@@ -58,8 +58,8 @@ class Controls extends Component {
           darkMode: darkMode,
           highlightLastMove: highlightLastMove
         }
-    
-        const url = `https://api.nf6.io/`;
+        
+        const url = 'https://api.nf6.io/';
     
         const req = new XMLHttpRequest();
     
