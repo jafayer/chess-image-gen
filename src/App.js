@@ -95,9 +95,9 @@ squareColors = {
     }
 
   }
-//https://api.nf6.io/game/
+//
   fetchFromServer = (path) => {
-    fetch('http://localhost:2477/game/'+path)
+    fetch('https://api.nf6.io/game/'+path)
     .then(res => res.json())
     .then(json => {
         if(json.err) {
