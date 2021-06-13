@@ -131,7 +131,8 @@ app.get('/game/:id',(req,res) => {
         console.log('Sending game to client!');
         res.json(row);
     }, () => { //failure
-        res.status(404).json({'err': 'Game not found!'});
+        res.setHeader('Content-Type', 'application/json');
+        res.status(404).send({'err': 'Game not found!'});
     });
 })
 
