@@ -2,7 +2,7 @@ const express = require('express');
 const sqlite3 = require('sqlite3');
 const cors = require('cors');
 
-const allowedOrigins = ['https://nf6.io','http://nf6.io','https://www.nf6.io','http://www.nf6.io'];
+const allowedOrigins = ['http://localhost:3000','https://nf6.io','http://nf6.io','https://www.nf6.io','http://www.nf6.io'];
 
 const corsOptions = {
     origin: allowedOrigins,
