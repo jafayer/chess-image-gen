@@ -99,6 +99,10 @@ squareColors = {
   fetchFromServer = (path) => {
     fetch('https://api.nf6.io/game/'+path)
     .then(res => {
+        if(res.err) {
+          this.error("Couldn't find a game with that ID!");
+          return;
+        }
         return res.json();
     })
     .then(json => {

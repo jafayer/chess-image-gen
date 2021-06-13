@@ -10,7 +10,7 @@
 /coverage
 
 #prod
-/server/db*
+/server/db/*
 
 # misc
 .DS_Store
