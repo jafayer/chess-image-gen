@@ -1,15 +1,12 @@
 const express = require('express');
 const sqlite3 = require('sqlite3');
 const cors = require('cors');
+const { Chess } = require('chess.js');
+const { createCanvas, loadImage } = require('canvas');
+const generator = require('../generator');
 
-const allowedOrigins = ['https://nf6.io','http://nf6.io','https://www.nf6.io','http://www.nf6.io'];
-
-const corsOptions = {
-    origin: allowedOrigins,
-    methods: ['GET','POST']
-}
 const app = express();
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded());
 
@@ -104,10 +101,6 @@ const lookup = (id,callback,failure) => {
         if(err) {
             console.warn(err);
         } else {
-            console.log("this is row:");
-            console.log(row);
-            console.log("this is typeof row:");
-            console.log(typeof row);
             if(row === undefined) {
                 failure();
             } else {
@@ -136,7 +129,33 @@ app.get('/game/:id',(req,res) => {
     });
 })
 
-app.post('/', (req,res) => {
+app.get('/image/:id/:size?', (req,res) => {
+    let gameID = req.params.id;
+    let size = req.params.size;
+    lookup(gameID, (row) => { //callback
+        try {
+            const chess = new Chess();
+            chess.load_pgn(row.pgn);
+
+            const canvas = createCanvas((size ? parseInt(size) : 1500), (size ? parseInt(size) : 1500));
+            const ctx = canvas.getContext('2d');
+
+            generator.updateBoard(ctx,chess,canvas,row.whiteColor,row.blackColor,row.darkMode,row.highlightLastMove);
+
+            res.setHeader('Content-Type', 'image/png');
+            canvas.pngStream().pipe(res);
+        } catch (e) {
+            console.log(e);
+        }
+
+    }, () => { //failure
+        res.setHeader('Content-Type', 'application/json');
+        res.status(404).send({'err': 'Game not found!'});
+    });
+
+});
+
+app.post('/add', (req,res) => {
     let p = req.body;
     console.log("We got a request!");
 
