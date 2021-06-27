@@ -1,3 +1,5 @@
+const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const sqlite3 = require('sqlite3');
 const cors = require('cors');
@@ -175,6 +177,58 @@ app.post('/add', (req,res) => {
         res.status(520).send('An error occurred');
     }
 });
+
+
+app.get('/:gameID?', (req,res) => {
+
+    console.log('well we tried');
+    const gameID = req.params.gameID;
+    let title = 'Nf6.io: Free chess art';
+    let description = 'An artsy diagram based on a game of chess!';
+    let image = 'https://nf6.io/image/2FuFNi/300';
+    let url = 'https://nf6.io/';
+
+    if(gameID) {
+        lookup(gameID, (row) => { //callback
+            
+            const chess = new Chess();
+            chess.load_pgn(row.pgn);
+
+            let headers = chess.header();
+            let white = headers.White;
+            let black = headers.Black;
+
+            if(white && black) {
+                title = `${white} vs ${black}`;
+                description = `An artsy chess diagram based on a game between ${white} and ${black}`;
+            }
+
+            image = 'https://nf6.io/image/' + gameID + '/300';
+            url = 'https://nf6.io/' + gameID;
+  
+        }, () => { //failure
+        });
+    }
+    
+    const indexFile = path.resolve('../build/index.html');
+    fs.readFile(indexFile,'utf8', (err,data) => {
+        if(err) {
+            console.log('Yikes! ',err);
+            res.status(500).send('Yikes, that sucks!');
+        }
+        
+        return res.send(
+            data.replace(/__TITLE__/g, title)
+            .replace(/__DESCRIPTION__/g,description)
+            .replace(/__IMAGE__/g,image)
+            .replace(/__URL__/g,url)
+        );
+    })
+
+});
+
+
+app.use(express.static('../build'));
 
 createTable();
 app.listen(2477);
