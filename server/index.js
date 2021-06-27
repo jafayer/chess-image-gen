@@ -5,7 +5,7 @@ const sqlite3 = require('sqlite3');
 const cors = require('cors');
 const { Chess } = require('chess.js');
 const { createCanvas, loadImage } = require('canvas');
-const generator = require('../generator');
+const generator = require('../src/resources/generator');
 const cheerio = require('cheerio');
 
 const app = express();
@@ -182,7 +182,6 @@ app.post('/add', (req,res) => {
 
 app.get('/:gameID?', (req,res) => {
 
-    console.log('well we tried');
     const gameID = req.params.gameID;
     let title = 'Nf6.io: Free chess art';
     let description = 'An artsy diagram based on a game of chess!';
@@ -229,7 +228,7 @@ app.get('/:gameID?', (req,res) => {
         $('meta[name="twitter:image"]').attr('content',image);
         $('meta[name="twitter:description"]').attr('content',description);
 
-        $('title').html(title);
+        $('title').text(title);
         
 
 

@@ -1,6 +1,6 @@
-fillBoard = (darkMode,ctx,canvas) => {
+const fillBoard = (darkMode,ctx,canvas) => {
 
-    square = canvas.width/8;
+    const square = canvas.width/8;
     ctx.lineWidth = square*0.065;
     ctx.lineCap = "round";
 
@@ -31,7 +31,8 @@ fillBoard = (darkMode,ctx,canvas) => {
     }
 }
 
-updateBoard = (ctx,chess,canvas,whiteColor,blackColor,darkMode,highlightLastMove) => {
+const updateBoard = (ctx,chess,canvas,whiteColor,blackColor,darkMode,highlightLastMove) => {
+    console.log("test!");
     ctx.clearRect(0,0,canvas.width,canvas.height);
     fillBoard(darkMode,ctx,canvas);
     
@@ -90,7 +91,7 @@ updateBoard = (ctx,chess,canvas,whiteColor,blackColor,darkMode,highlightLastMove
     
 }
 
-drawPath = (ctx,whiteColor,blackColor,from,to,color) => {
+const drawPath = (ctx,whiteColor,blackColor,from,to,color) => {
 
     ctx.beginPath();
     ctx.strokeStyle = (color === 'w' ? whiteColor : blackColor);
@@ -101,7 +102,7 @@ drawPath = (ctx,whiteColor,blackColor,from,to,color) => {
 }
 
 
-files = {
+const files = {
     a:0,
     b:1,
     c:2,
@@ -112,7 +113,7 @@ files = {
     h:7
 }
 
-squareColors = {
+const squareColors = {
     normal: {
       darkSquare: "#888",
       lightSquare: "#eee"

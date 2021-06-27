@@ -5,6 +5,7 @@ import Controls from './components/controls';
 import Messages from './components/messages';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import generator from './resources/generator' ;
 
 class App extends Component {
   state = {
@@ -19,14 +20,38 @@ class App extends Component {
     return (
       
       <div className="wrapper">
-        <h1></h1>
+        {this.state.fetchedGame && this.state.white && this.state.black &&
+          <h1>
+            {this.state.white} vs {this.state.black}
+            {this.state.result && <span className='score'>{" " + this.state.result}</span>}
+          </h1>
+        }
         <p id="date"></p>
         <canvas width="560" height="560"
           style={{
             transform: this.state.flipped ? "rotate(180deg)" : ""
           }}
         ></canvas>
-        <p id="pgn"></p>
+        
+        {this.state.fetchedGame &&
+        <p id="pgn">{this.chess.history().map((elem,i) => {
+          if(i%2 === 0) {
+            return <><b>{Math.ceil(i/2)+1 + ". "}</b><>{elem + " "}</></>;
+          } else {
+            return <>{elem + " "}</>;
+          }
+        })}</p>}
+
+
+        {/* let pgn = "";
+        (this.chess.history()).forEach((t,i) => {
+            if(i % 2 === 0) {
+                pgn += ("<b>" + (Math.ceil(i/2)+1) + ".</b>&nbsp;");
+            }
+        
+            pgn += t + " ";
+        });
+        pgn.trim(); */}
         {!this.state.fetchedGame &&
         <Controls
           chess={this.chess}
@@ -80,7 +105,7 @@ squareColors = {
     this.ctx.lineWidth = this.square*0.065;
     this.ctx.lineCap = "round";
 
-    this.fillBoard();
+    generator.fillBoard(this.state.darkMode,this.ctx,this.canvas);
 
     document.chess = this.chess;
 
@@ -104,142 +129,28 @@ squareColors = {
           return this.error("Couldn't find a game with that ID!");
         }
         console.log(json);
+        this.chess.load_pgn(json.pgn);
+        let headers = this.chess.header();
         this.setState({
         fetchedGame: json,
         blackColor: json.blackColor,
         whiteColor: json.whiteColor,
         pgn: json.pgn,
+        white: headers.White,
+        black: headers.Black,
+        result: headers.Result,
         darkMode: json.darkMode,
         highlightLastMove: json.highlightLastMove,
         fetchingGame: false,
         }, () => {
-        this.chess.load_pgn(this.state.pgn);
-        this.updateBoard();
-        console.log('fetched');
+          generator.updateBoard(this.ctx,this.chess,this.canvas,this.state.whiteColor,this.state.blackColor,this.state.darkMode,this.state.highlightLastMove);
+          console.log('fetched');
         });
     })
     .catch(err => {
       this.error("Couldn't find a game with that ID!");
     });
   }
-
-
-  fillBoard = () => {
-    let rank = 1;
-    while(rank < 9) {
-        let file = 0;
-        while(file < 8) {
-            if(rank % 2 !== 0) {
-                if(file % 2 === 0) {
-                    this.ctx.fillStyle = this.state.darkMode ? this.squareColors.dark.darkSquare : this.squareColors.normal.darkSquare;
-                    this.ctx.fillRect(file*this.square,this.canvas.height-(this.square*rank),this.square,this.square);
-                } else {
-                    this.ctx.fillStyle = this.state.darkMode ? this.squareColors.dark.lightSquare : this.squareColors.normal.lightSquare;
-                    this.ctx.fillRect(file*this.square,this.canvas.height-(this.square*rank),this.square,this.square);
-                }
-            } else {
-                if(file % 2 !== 0) {
-                    this.ctx.fillStyle = this.state.darkMode ? this.squareColors.dark.darkSquare : this.squareColors.normal.darkSquare;
-                    this.ctx.fillRect(file*this.square,this.canvas.height-(this.square*rank),this.square,this.square);
-                } else {
-                    this.ctx.fillStyle = this.state.darkMode ? this.squareColors.dark.lightSquare : this.squareColors.normal.lightSquare;
-                    this.ctx.fillRect(file*this.square,this.canvas.height-(this.square*rank),this.square,this.square);
-                }
-            }
-            file++;
-        }
-        rank++;
-    }
-}
-
-drawPath = (from,to,color) => {
-
-  this.ctx.beginPath();
-
-  this.ctx.strokeStyle = (color === 'w' ? this.state.whiteColor : this.state.blackColor);
-  this.ctx.moveTo(from.x,from.y);
-  this.ctx.lineTo(to.x,to.y);
-  this.ctx.stroke();
-}
-
-updateBoard = () => {
-  this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
-  this.fillBoard();
-  
-  const history = this.chess.history({verbose:true});
-
-  let moves = [];
-
-  history.forEach(move => {
-    let fromTo = {
-        from: move.from,
-        to: move.to,
-        color: move.color
-    }
-    let addTo = [];
-    addTo.push(fromTo);
-
-    moves = moves.concat(addTo);
-
-  });
-
-  moves.forEach((move,i) => {
-      let from = move.from;
-      let to = move.to;
-      
-      let fromFile = from[0];
-      let fromRank = parseInt(from[1])-1;
-      let fromFileNum = this.files[fromFile];
-      
-      let fromCoords = {
-          x: (this.square/2)+(this.square*fromFileNum),
-          y: this.canvas.height-this.square/2 - (this.square*fromRank)
-      }
-
-      let toFile = to[0];
-      let toRank = parseInt(to[1])-1;
-      let toFileNum = this.files[toFile];
-
-      let toCoords = {
-          x: (this.square/2)+(this.square*toFileNum),
-          y: this.canvas.height-(this.square/2) - (this.square*toRank)
-      };
-      
-      this.drawPath(fromCoords,toCoords,move.color);
-
-      if(i === moves.length-1 && this.state.highlightLastMove) {
-        this.ctx.beginPath();
-        this.ctx.arc(toCoords.x,toCoords.y,this.square/8,0,2*Math.PI);
-        this.ctx.stroke();
-      }
-  });
-  
-
-  let h1 = document.querySelector('h1');
-  let header = this.chess.header();
-
-  let pgn = "";
-  (this.chess.history()).forEach((t,i) => {
-      if(i % 2 === 0) {
-          pgn += ("<b>" + (Math.ceil(i/2)+1) + ".</b>&nbsp;");
-      }
-  
-      pgn += t + " ";
-  });
-  pgn.trim();
-
-  const pgnPlace = document.querySelector('#pgn');
-  pgnPlace.innerHTML = pgn;
-
-  if(header.White && header.Black) {
-      h1.innerHTML = `${header.White} vs ${header.Black}${header.Result ? " <span class='score'>" + header.Result + "</span>": ""}`;
-
-      if(header.Date) {
-          let date = document.querySelector('#date');
-          date.innerText = `${header.Date}`;
-      }
-  }
-}
 
 handlePGN = (value) => {
     const res = this.chess.load_pgn(value);
@@ -248,7 +159,7 @@ handlePGN = (value) => {
       this.setState({
         pgn: value
       }, () => {
-        this.updateBoard();
+        generator.updateBoard(this.ctx,this.chess,this.canvas,this.state.whiteColor,this.state.blackColor,this.state.darkMode,this.state.highlightLastMove);
       });
     }
   }
@@ -260,7 +171,7 @@ handlePGN = (value) => {
       if(callback) {
         callback();
       }
-      this.updateBoard();
+      generator.updateBoard(this.ctx,this.chess,this.canvas,this.state.whiteColor,this.state.blackColor,this.state.darkMode,this.state.highlightLastMove);
     });
   }
 
