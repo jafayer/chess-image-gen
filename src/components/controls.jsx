@@ -59,7 +59,7 @@ class Controls extends Component {
           highlightLastMove: highlightLastMove
         }
         
-        const url = 'https://api.nf6.io/add';
+        const url = 'https://nf6.io/add';
     
         const req = new XMLHttpRequest();
     
