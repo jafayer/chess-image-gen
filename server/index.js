@@ -6,6 +6,7 @@ const cors = require('cors');
 const { Chess } = require('chess.js');
 const { createCanvas, loadImage } = require('canvas');
 const generator = require('../generator');
+const cheerio = require('cheerio');
 
 const app = express();
 app.use(cors());
@@ -216,12 +217,25 @@ app.get('/:gameID?', (req,res) => {
             console.log('Yikes! ',err);
             res.status(500).send('Yikes, that sucks!');
         }
+
+        const $ = cheerio.load(data);
+
+        $('meta[property="og:title"]').attr('content',title);
+        $('meta[property="og:image"]').attr('content',image);
+        $('meta[property="og:description"]').attr('content',description);
+        $('meta[property="og:url"]').attr('content',url);
+
+        $('meta[name="twitter:title"]').attr('content',title);
+        $('meta[name="twitter:image"]').attr('content',image);
+        $('meta[name="twitter:description"]').attr('content',description);
+
+        $('title').html(title);
+        
+
+
         
         return res.send(
-            data.replace(/__TITLE__/g, title)
-            .replace(/__DESCRIPTION__/g,description)
-            .replace(/__IMAGE__/g,image)
-            .replace(/__URL__/g,url)
+            $.root().html()
         );
     })
 
