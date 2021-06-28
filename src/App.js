@@ -42,17 +42,7 @@ class App extends Component {
           }
         })}</p>}
 
-
-        {/* let pgn = "";
-        (this.chess.history()).forEach((t,i) => {
-            if(i % 2 === 0) {
-                pgn += ("<b>" + (Math.ceil(i/2)+1) + ".</b>&nbsp;");
-            }
-        
-            pgn += t + " ";
-        });
-        pgn.trim(); */}
-        {!this.state.fetchedGame &&
+        {(!this.state.fetchedGame && !this.state.fetchingGame) &&
         <Controls
           chess={this.chess}
           handlePGN={this.handlePGN}
