@@ -135,25 +135,30 @@ app.get('/game/:id',(req,res) => {
 app.get('/image/:id/:size?', (req,res) => {
     let gameID = req.params.id;
     let size = req.params.size;
+    if(size > 2500) {
+        console.log('Image requested was too large! Redirecting...');
+        return res.redirect('/image/' + gameID + "/2500");
+    }
+
+    const chess = new Chess();
+    const canvas = createCanvas((size ? parseInt(size) : 1500), (size ? parseInt(size) : 1500));
+    const ctx = canvas.getContext('2d');
+
     lookup(gameID, (row) => { //callback
         try {
-            const chess = new Chess();
             chess.load_pgn(row.pgn);
-
-            const canvas = createCanvas((size ? parseInt(size) : 1500), (size ? parseInt(size) : 1500));
-            const ctx = canvas.getContext('2d');
-
             generator.updateBoard(ctx,chess,canvas,row.whiteColor,row.blackColor,row.darkMode,row.highlightLastMove);
 
             res.setHeader('Content-Type', 'image/png');
-            canvas.pngStream().pipe(res);
+            return canvas.pngStream().pipe(res);
         } catch (e) {
             console.log(e);
         }
 
     }, () => { //failure
-        res.setHeader('Content-Type', 'application/json');
-        res.status(404).send({'err': 'Game not found!'});
+        generator.fillBoard(false,ctx,canvas);
+        res.setHeader('Content-Type', 'image/png');
+        return canvas.pngStream().pipe(res);
     });
 
 });

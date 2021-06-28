@@ -32,11 +32,9 @@ const fillBoard = (darkMode,ctx,canvas) => {
 }
 
 const updateBoard = (ctx,chess,canvas,whiteColor,blackColor,darkMode,highlightLastMove) => {
-    console.log("test!");
     ctx.clearRect(0,0,canvas.width,canvas.height);
     fillBoard(darkMode,ctx,canvas);
     
-    console.log(chess);
     const history = chess.history({verbose:true});
   
     let moves = [];
@@ -55,7 +53,6 @@ const updateBoard = (ctx,chess,canvas,whiteColor,blackColor,darkMode,highlightLa
     });
     
     const square = canvas.width/8;
-    console.log(history);
 
     moves.forEach((move,i) => {
 
