@@ -188,9 +188,9 @@ app.post('/add', (req,res) => {
 app.get('/:gameID?', (req,res) => {
 
     const gameID = req.params.gameID;
-    let title = 'Nf6.io: Free chess art';
+    let title = 'Nf6.io: Free Chess Art';
     let description = 'An artsy diagram based on a game of chess!';
-    let image = 'https://nf6.io/image/2FuFNi/300';
+    let image = 'https://nf6.io/image/fallback/300';
     let url = 'https://nf6.io/';
 
     if(gameID) {
