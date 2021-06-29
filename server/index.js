@@ -134,8 +134,8 @@ app.get('/game/:id',(req,res) => {
 
 app.get('/image/:id/:size?', (req,res) => {
     let gameID = req.params.id;
-    let size = req.params.size;
-    if(size > 2500) {
+    let size = parseInt(req.params.size);
+    if(size > 2500 && (req.params.size || 0)) {
         console.log('Image requested was too large! Redirecting...');
         return res.redirect('/image/' + gameID + "/2500");
     }
