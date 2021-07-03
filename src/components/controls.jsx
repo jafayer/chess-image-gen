@@ -59,7 +59,7 @@ class Controls extends Component {
           highlightLastMove: highlightLastMove
         }
         
-        const url = 'http://localhost:2477/add';
+        const url = 'https://nf6.io/add';
     
         const req = new XMLHttpRequest();
     
