@@ -14,7 +14,6 @@ app.use(express.json());
 app.use(express.urlencoded());
 
 
-
 const db = new sqlite3.Database('./db/games.db', sqlite3.OPEN_READWRITE, (err) => {
     if(err) {
         console.error(err.message);
@@ -171,7 +170,7 @@ app.post('/add', (req,res) => {
         try {
             insertEntry(p.pgn,p.whiteColor,p.blackColor,p.darkMode,p.highlightLastMove, (entryID) => {
                 console.log(entryID);
-                let responseBody = {id: entryID};
+                let responseBody = {id: entryID,pgn:p.pgn,whiteColor:p.whiteColor,blackColor:p.blackColor,darkMode:p.darkMode,highlightLastMove:p.highlightLastMove};
                 res.status(200).json(responseBody); 
             });
         } catch (e) {

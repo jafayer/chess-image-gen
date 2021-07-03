@@ -52,6 +52,7 @@ class App extends Component {
           blackColor={this.state.blackColor}
           darkMode={this.state.darkMode}
           highlightLastMove={this.state.highlightLastMove}
+          localSetter={this.localSetter}
         />}
         {(!this.state.fetchedGame && !this.state.fetchingGame) && (
           <Messages
@@ -101,42 +102,53 @@ squareColors = {
 
     const path = window.location.pathname.slice(1);
     if(path) {
-      console.log('fetching');
-      this.setState({
-        fetchingGame: true
-      },() => {
-        this.fetchFromServer(path);
-      });
+      let localViewed = this.localGetter(path,'viewed')[0];
+      let localCreated = this.localGetter(path,'created')[0]
+      if(localViewed || localCreated) {
+        console.log("Found local game!");
+        this.loadGame(localViewed ? localViewed : localCreated);
+        return localViewed ? localViewed : localCreated;
+      } else {
+        console.log('fetching');
+        this.setState({
+          fetchingGame: true
+        },() => {
+          this.fetchFromServer(path);
+        });
+      }
     }
+  }
 
+  loadGame = (json) => {
+    if(json.err) {
+      return this.error("Couldn't find a game with that ID!");
+    }
+    console.log(json);
+    this.chess.load_pgn(json.pgn);
+    let headers = this.chess.header();
+    this.setState({
+    fetchedGame: json,
+    blackColor: json.blackColor,
+    whiteColor: json.whiteColor,
+    pgn: json.pgn,
+    white: headers.White,
+    black: headers.Black,
+    result: headers.Result,
+    darkMode: json.darkMode,
+    highlightLastMove: json.highlightLastMove,
+    fetchingGame: false,
+    }, () => {
+      generator.updateBoard(this.ctx,this.chess,this.canvas,this.state.whiteColor,this.state.blackColor,this.state.darkMode,this.state.highlightLastMove);
+      if(!this.localGetter(json,'viewed')) {
+        this.localSetter(json,'viewed');
+      }
+    });
   }
 //
   fetchFromServer = (path) => {
     fetch('https://nf6.io/game/'+path)
     .then(res => res.json())
-    .then(json => {
-        if(json.err) {
-          return this.error("Couldn't find a game with that ID!");
-        }
-        console.log(json);
-        this.chess.load_pgn(json.pgn);
-        let headers = this.chess.header();
-        this.setState({
-        fetchedGame: json,
-        blackColor: json.blackColor,
-        whiteColor: json.whiteColor,
-        pgn: json.pgn,
-        white: headers.White,
-        black: headers.Black,
-        result: headers.Result,
-        darkMode: json.darkMode,
-        highlightLastMove: json.highlightLastMove,
-        fetchingGame: false,
-        }, () => {
-          generator.updateBoard(this.ctx,this.chess,this.canvas,this.state.whiteColor,this.state.blackColor,this.state.darkMode,this.state.highlightLastMove);
-          console.log('fetched');
-        });
-    })
+    .then(json => this.loadGame(json))
     .catch(err => {
       this.error("Couldn't find a game with that ID!");
     });
@@ -176,6 +188,28 @@ handlePGN = (value) => {
       progress: undefined,
     });
   }
+
+  localGetter = (id,target) => {
+    const local = JSON.parse(window.localStorage.getItem(target));
+    if(local) {
+      return local.filter(obj => obj.id === id);
+    } else {
+      return false;
+    }
+  }
+
+  localSetter = (obj,target) => {
+    if(window.localStorage.getItem(target) === null) {
+      window.localStorage.setItem(target,'[]');
+    }
+
+    let local = JSON.parse(window.localStorage.getItem(target));
+    local.push(obj);
+    window.localStorage.setItem(target,JSON.stringify(local));
+
+    console.log(`Added ${obj.id} to local storage: ${target}`);
+  }
+
 }
  
 export default App;

@@ -59,7 +59,7 @@ class Controls extends Component {
           highlightLastMove: highlightLastMove
         }
         
-        const url = 'https://nf6.io/add';
+        const url = 'http://localhost:2477/add';
     
         const req = new XMLHttpRequest();
     
@@ -72,6 +72,7 @@ class Controls extends Component {
               let response = JSON.parse(req.response)
               console.log(response);
               this.props.handleOtherChange(response.id,'fetchedID');
+              this.props.localSetter(response,'created');
             } else {
               console.warn(`There be errors about here`);
             }
