@@ -14,6 +14,9 @@ app.use(express.json());
 app.use(express.urlencoded());
 
 
+app.use(express.static('../build'));
+
+
 const db = new sqlite3.Database('./db/games.db', sqlite3.OPEN_READWRITE, (err) => {
     if(err) {
         console.error(err.message);
@@ -187,6 +190,7 @@ app.post('/add', (req,res) => {
 app.get('/:gameID?', (req,res) => {
 
     const gameID = req.params.gameID;
+    console.log(gameID);
     let title = 'Nf6.io: Free Chess Art';
     let description = 'An artsy diagram based on a game of chess!';
     let image = 'https://nf6.io/image/fallback/300';
@@ -243,9 +247,6 @@ app.get('/:gameID?', (req,res) => {
     })
 
 });
-
-
-app.use(express.static('../build'));
 
 createTable();
 app.listen(2477);
