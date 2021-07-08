@@ -19,47 +19,49 @@ class App extends Component {
   render() { 
     return (
       
-      <div className="wrapper">
-        {this.state.fetchedGame && this.state.white && this.state.black &&
-          <h1>
-            {this.state.white} vs {this.state.black}
-            {this.state.result && <span className='score'>{" " + this.state.result}</span>}
-          </h1>
-        }
-        <p id="date"></p>
-        <canvas width="560" height="560"
-          style={{
-            transform: this.state.flipped ? "rotate(180deg)" : ""
-          }}
-        ></canvas>
-        
-        {this.state.fetchedGame &&
-        <p id="pgn">{this.chess.history().map((elem,i) => {
-          if(i%2 === 0) {
-            return <><b>{Math.ceil(i/2)+1 + ". "}</b><>{elem + " "}</></>;
-          } else {
-            return <>{elem + " "}</>;
+      <div className="container">
+        <div className="wrapper">
+          {this.state.fetchedGame && this.state.white && this.state.black &&
+            <h1>
+              {this.state.white} vs {this.state.black}
+              {this.state.result && <span className='score'>{" " + this.state.result}</span>}
+            </h1>
           }
-        })}</p>}
+          <p id="date"></p>
+          <canvas width="560" height="560"
+            style={{
+              transform: this.state.flipped ? "rotate(180deg)" : ""
+            }}
+          ></canvas>
+          
+          {this.state.fetchedGame &&
+          <p id="pgn">{this.chess.history().map((elem,i) => {
+            if(i%2 === 0) {
+              return <><b>{Math.ceil(i/2)+1 + ". "}</b><>{elem + " "}</></>;
+            } else {
+              return <>{elem + " "}</>;
+            }
+          })}</p>}
 
-        {(!this.state.fetchedGame && !this.state.fetchingGame) &&
-        <Controls
-          chess={this.chess}
-          handlePGN={this.handlePGN}
-          handleOtherChange={this.handleOtherChange}
-          fetchedID={this.state.fetchedID}
-          whiteColor={this.state.whiteColor}
-          blackColor={this.state.blackColor}
-          darkMode={this.state.darkMode}
-          highlightLastMove={this.state.highlightLastMove}
-          localSetter={this.localSetter}
-        />}
-        {(!this.state.fetchedGame && !this.state.fetchingGame) && (
-          <Messages
+          {(!this.state.fetchedGame && !this.state.fetchingGame) &&
+          <Controls
+            chess={this.chess}
+            handlePGN={this.handlePGN}
+            handleOtherChange={this.handleOtherChange}
             fetchedID={this.state.fetchedID}
-          />
-        )}
-        <ToastContainer />
+            whiteColor={this.state.whiteColor}
+            blackColor={this.state.blackColor}
+            darkMode={this.state.darkMode}
+            highlightLastMove={this.state.highlightLastMove}
+            localSetter={this.localSetter}
+          />}
+          {(!this.state.fetchedGame && !this.state.fetchingGame) && (
+            <Messages
+              fetchedID={this.state.fetchedID}
+            />
+          )}
+          <ToastContainer />
+        </div>
       </div>
     );
   }
@@ -103,7 +105,7 @@ squareColors = {
     const path = window.location.pathname.slice(1);
     if(path) {
       let localViewed = this.localGetter(path,'viewed')[0];
-      let localCreated = this.localGetter(path,'created')[0]
+      let localCreated = this.localGetter(path,'created')[0];
       if(localViewed || localCreated) {
         console.log("Found local game!");
         this.loadGame(localViewed ? localViewed : localCreated);
@@ -139,7 +141,9 @@ squareColors = {
     fetchingGame: false,
     }, () => {
       generator.updateBoard(this.ctx,this.chess,this.canvas,this.state.whiteColor,this.state.blackColor,this.state.darkMode,this.state.highlightLastMove);
-      if(!this.localGetter(json,'viewed')) {
+      console.log('test');
+      if(!this.localGetter(json.id,'viewed')[0]) {
+        console.log('test');
         this.localSetter(json,'viewed');
       }
     });

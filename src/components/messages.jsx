@@ -9,7 +9,8 @@ class Messages extends Component {
                 <div className="message warn">
                 <span className="material-icons">warning</span>
                 <p>
-                    Once you press save, you'll be given a unique URL and won't be able to change your design. <strong>Copy your URL before closing the page!</strong>
+                    Once you press save, you'll be given a unique URL and won't be able to change your design. <strong>Copy your URL before closing the page! </strong>
+                    Go to <a href="https://nf6.io/recents">https://nf6.io/recents</a> to see your recently viewed and created games.
                 </p>
                 </div>
             )}
