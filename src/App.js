@@ -126,7 +126,7 @@ squareColors = {
       return this.error("Couldn't find a game with that ID!");
     }
     console.log(json);
-    this.chess.load_pgn(json.pgn);
+    this.chess.load_pgn(json.pgn,{sloppy:true});
     let headers = this.chess.header();
     this.setState({
     fetchedGame: json,
@@ -159,7 +159,7 @@ squareColors = {
   }
 
 handlePGN = (value) => {
-    const res = this.chess.load_pgn(value);
+    const res = this.chess.load_pgn(value,{sloppy:true});
 
     if(res) {
       this.setState({

@@ -148,7 +148,7 @@ app.get('/image/:id/:size?', (req,res) => {
 
     lookup(gameID, (row) => { //callback
         try {
-            chess.load_pgn(row.pgn);
+            chess.load_pgn(row.pgn,{sloppy:true});
             generator.updateBoard(ctx,chess,canvas,row.whiteColor,row.blackColor,row.darkMode,row.highlightLastMove);
 
             res.setHeader('Content-Type', 'image/png');
@@ -200,7 +200,7 @@ app.get('/:gameID?', (req,res) => {
         lookup(gameID, (row) => { //callback
             
             const chess = new Chess();
-            chess.load_pgn(row.pgn);
+            chess.load_pgn(row.pgn,{sloppy:true});
 
             let headers = chess.header();
             let white = headers.White;
