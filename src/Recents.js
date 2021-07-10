@@ -8,17 +8,24 @@ class Recents extends Component {
     state = {  }
     render() { 
         return (
-            <div className="recents">
-                <h1>Recent Games</h1>
-                <h2>Recently viewed</h2>
-                <div className="cardContainer">
-                    {this.state.viewed && JSON.parse(this.state.viewed).map(game => this.cardTemplate(game))}
+            <>
+                <header>
+                    <a href="/">
+                        <img className="logo" src={'./images/Nf6io-logo-final.png'} alt="Nf6.io Logo" />
+                    </a>
+                </header>
+                <div className="recents">
+                    <h1>Recent Games</h1>
+                    <h2>Recently viewed</h2>
+                    <div className="cardContainer">
+                        {this.state.viewed && JSON.parse(this.state.viewed).map(game => this.cardTemplate(game))}
+                    </div>
+                    <h2>Recently created</h2>
+                    <div className="cardContainer">
+                        {this.state.created && JSON.parse(this.state.created).map(game => this.cardTemplate(game))}
+                    </div>
                 </div>
-                <h2>Recently created</h2>
-                <div className="cardContainer">
-                    {this.state.created && JSON.parse(this.state.created).map(game => this.cardTemplate(game))}
-                </div>
-            </div>
+            </>
         );
     }
 
