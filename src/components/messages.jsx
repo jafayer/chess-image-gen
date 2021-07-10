@@ -32,8 +32,11 @@ class Messages extends Component {
         if(window.navigator.clipboard){
             const baseurl = "https://nf6.io/";
             const url = (baseurl+this.props.fetchedID);
-            window.navigator.clipboard.writeText(url).then(() => {
+            window.navigator.clipboard.writeText(url).then(() => { // success
                 console.log(`Wrote to clipboard: ${url}`);
+                this.props.success("Copied URL to clipboard!")
+            }, () => { // failure
+                this.props.error("Failed to copy to clipboard. Please try manually copying the URL!");
             });
         }
     }

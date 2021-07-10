@@ -43,6 +43,10 @@ class Controls extends Component {
 
 
     saveToServer = () => {
+        if(this.props.badInput || this.props.pgn === undefined) {
+            return this.props.error("There was a problem with your PGN. Please try again.");
+        }
+        
         let saveButton = document.querySelector('.saveButton');
         saveButton.disabled = true;
         const pgn = this.props.chess.pgn();

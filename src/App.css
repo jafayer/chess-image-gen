@@ -1,3 +1,16 @@
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+header a {
+  width: 250px;
+}
+header .logo {
+  max-width: 100%;
+}
+
 .container {
   margin: 0;
   padding: 25px;

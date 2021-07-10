@@ -18,51 +18,64 @@ class App extends Component {
 
   render() { 
     return (
-      
-      <div className="container">
-        <div className="wrapper">
-          {this.state.fetchedGame && this.state.white && this.state.black &&
-            <h1>
-              {this.state.white} vs {this.state.black}
-              {this.state.result && <span className='score'>{" " + this.state.result}</span>}
-            </h1>
-          }
-          <p id="date"></p>
-          <canvas width="560" height="560"
-            style={{
-              transform: this.state.flipped ? "rotate(180deg)" : ""
-            }}
-          ></canvas>
-          
-          {this.state.fetchedGame &&
-          <p id="pgn">{this.chess.history().map((elem,i) => {
-            if(i%2 === 0) {
-              return <><b>{Math.ceil(i/2)+1 + ". "}</b><>{elem + " "}</></>;
-            } else {
-              return <>{elem + " "}</>;
+      <>
+        <header>
+          <a href="/">
+            <img className="logo" src={'./images/Nf6io-logo-final.png'} alt="Nf6.io Logo" />
+          </a>
+        </header>
+        <div className="container">
+          <div className="wrapper">
+            {this.state.fetchedGame && this.state.white && this.state.black &&
+              <h1>
+                {this.state.white} vs {this.state.black}
+                {this.state.result && <span className='score'>{" " + this.state.result}</span>}
+              </h1>
             }
-          })}</p>}
+            <p id="date"></p>
+            <canvas width="560" height="560"
+              style={{
+                transform: this.state.flipped ? "rotate(180deg)" : ""
+              }}
+            ></canvas>
+            
+            {this.state.fetchedGame &&
+            <p id="pgn">{this.chess.history().map((elem,i) => {
+              if(i%2 === 0) {
+                return <><b>{Math.ceil(i/2)+1 + ". "}</b><>{elem + " "}</></>;
+              } else {
+                return <>{elem + " "}</>;
+              }
+            })}</p>}
 
-          {(!this.state.fetchedGame && !this.state.fetchingGame) &&
-          <Controls
-            chess={this.chess}
-            handlePGN={this.handlePGN}
-            handleOtherChange={this.handleOtherChange}
-            fetchedID={this.state.fetchedID}
-            whiteColor={this.state.whiteColor}
-            blackColor={this.state.blackColor}
-            darkMode={this.state.darkMode}
-            highlightLastMove={this.state.highlightLastMove}
-            localSetter={this.localSetter}
-          />}
-          {(!this.state.fetchedGame && !this.state.fetchingGame) && (
-            <Messages
+            {(!this.state.fetchedGame && !this.state.fetchingGame) &&
+            <Controls
+              chess={this.chess}
+              handlePGN={this.handlePGN}
+              handleOtherChange={this.handleOtherChange}
               fetchedID={this.state.fetchedID}
-            />
-          )}
-          <ToastContainer />
+              pgn={this.state.pgn}
+              whiteColor={this.state.whiteColor}
+              blackColor={this.state.blackColor}
+              darkMode={this.state.darkMode}
+              highlightLastMove={this.state.highlightLastMove}
+              localSetter={this.localSetter}
+              success={this.success}
+              error={this.error}
+              badInput={this.state.badInput}
+            />}
+            {(!this.state.fetchedGame && !this.state.fetchingGame) && (
+              <Messages
+                fetchedID={this.state.fetchedID}
+                success={this.success}
+                error={this.error}
+              />
+            )}
+            <ToastContainer />
+          </div>
         </div>
-      </div>
+      </>
+      
     );
   }
 
@@ -163,9 +176,14 @@ handlePGN = (value) => {
 
     if(res) {
       this.setState({
-        pgn: value
+        pgn: value,
+        badInput: false,
       }, () => {
         generator.updateBoard(this.ctx,this.chess,this.canvas,this.state.whiteColor,this.state.blackColor,this.state.darkMode,this.state.highlightLastMove);
+      });
+    } else {
+      this.setState({
+        badInput: true
       });
     }
   }
@@ -183,6 +201,18 @@ handlePGN = (value) => {
 
   error = (message) => {
     toast.error(message, {
+      position: "bottom-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  }
+
+  success = (message) => {
+    toast.success(message, {
       position: "bottom-center",
       autoClose: 5000,
       hideProgressBar: false,
