@@ -112,8 +112,8 @@ const files = {
 
 const squareColors = {
     normal: {
-      darkSquare: "#adadad",
-      lightSquare: "#eee"
+      darkSquare: "#e4e4e4",
+      lightSquare: "#f5f5f5"
     },
     dark: {
       darkSquare: "#000",
