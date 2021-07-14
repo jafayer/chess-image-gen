@@ -7,6 +7,7 @@ const { Chess } = require('chess.js');
 const { createCanvas, loadImage } = require('canvas');
 const generator = require('../src/resources/generator');
 const cheerio = require('cheerio');
+const morgan = require('morgan');
 
 const app = express();
 app.use(cors());
@@ -15,6 +16,10 @@ app.use(express.urlencoded());
 
 
 app.use(express.static('../build'));
+
+const accessLogStream = fs.createWriteStream(path.join(__dirname,'access.log'), {flags: 'a'});
+app.use(morgan('":date[web]", ":method",  ":url",  ":status",  ":res[content-length]", ":remote-addr", ":user-agent", ":response-time ms";',{stream:accessLogStream}));
+
 
 
 const db = new sqlite3.Database('./db/games.db', sqlite3.OPEN_READWRITE, (err) => {
