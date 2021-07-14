@@ -17,6 +17,7 @@ app.use(express.urlencoded());
 
 app.use(express.static('../build'));
 
+app.set('trust proxy','127.0.0.1');
 const accessLogStream = fs.createWriteStream(path.join(__dirname,'access.log'), {flags: 'a'});
 app.use(morgan('":date[web]", ":method",  ":url",  ":status",  ":res[content-length]", ":remote-addr", ":user-agent", ":response-time ms";',{stream:accessLogStream}));
 
