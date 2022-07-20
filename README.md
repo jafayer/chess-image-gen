@@ -1,4 +1,8 @@
-![Nf6.io games](https://joshuafayer.com/wp-content/uploads/2022/04/nf6-sc.png)
+
+<p align="center">
+  <img alt="Nf6.io header" src="https://joshuafayer.com/wp-content/uploads/2022/04/nf6-sc.png" style="width: 600px;" />
+</p>
+
 # Nf6.io
 
 A full-stack web app that generates art based on your chess games.
@@ -15,10 +19,13 @@ to download a dynamically-sized image export of your game.
 
 ## Example: The Opera Game
 
-Below is a screenshot of the Nf6.io page for the famous Opera game:
+Below is a screenshot of the Nf6.io page for the famous Opera game, and its server-side rendered metadata:
 
-![Opera Game nf6.io page](https://joshuafayer.com/wp-content/uploads/2022/04/nf6snip.png)
-
-And its server-side rendered metadata:
-
-![Opera Game opengraph metadata](https://joshuafayer.com/wp-content/uploads/2022/04/nf6preview.png)
+<a href="https://www.nf6.io/2FuFNi">
+  <p align="center">
+    <img alt="Opera Game nf6.io page" src="https://joshuafayer.com/wp-content/uploads/2022/04/nf6snip.png" style="width: 500px" />
+  </p>
+</a>
+<p align="center">
+  <img align="center" alt="nf6.io open graph metadataa" src="https://joshuafayer.com/wp-content/uploads/2022/04/nf6preview.png" style="width: 300px" />
+</p>
